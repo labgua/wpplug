@@ -57,9 +57,11 @@ class Setup implements Registrable
 
 		if( empty( $db_version ) ){
 
-			$f = $this->onInstall;
-            /** @var \Closure $f */
-            $f();
+		    if( $this->onInstall != null  ){
+                /** @var \Closure $f */
+                $f = $this->onInstall;
+                $f();
+            }
 
 			update_option($this->codename, $this->version);
 		}
@@ -79,8 +81,7 @@ class Setup implements Registrable
 	public function register(){
 
 		//registro install
-        if( $this->onInstall != null )
-		    add_action('init', [ &$this, "__install" ], 0);
+        add_action('init', [ &$this, "__install" ], 0);
 
 		//registro onActivate
         if( $this->onActivate != null )

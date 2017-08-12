@@ -22,6 +22,7 @@ class AdminController implements Registrable
 
         $this->filevar = PathFactory::getFile($codename);
 
+        $this->slugFunctions = [];
         $this->styles[] = "asset/css/admin.css";
         $this->scripts[] = "asset/js/admin.js";
     }

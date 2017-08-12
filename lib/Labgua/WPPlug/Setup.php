@@ -22,6 +22,7 @@ class Setup implements Registrable
 
         $this->filevar = PathFactory::getFile($codename);
 
+        $this->onInstall = null;
 		$this->onActivate = null;
 		$this->onDeactivate = null;
 
@@ -57,7 +58,8 @@ class Setup implements Registrable
 		if( empty( $db_version ) ){
 
 			$f = $this->onInstall;
-			$f();
+            /** @var \Closure $f */
+            $f();
 
 			update_option($this->codename, $this->version);
 		}
@@ -77,13 +79,16 @@ class Setup implements Registrable
 	public function register(){
 
 		//registro install
-		add_action('init', [ &$this, "__install" ], 0);
+        if( $this->onInstall != null )
+		    add_action('init', [ &$this, "__install" ], 0);
 
 		//registro onActivate
-		register_activation_hook($this->filevar, [&$this->onActivate, '__invoke']);
+        if( $this->onActivate != null )
+		    register_activation_hook($this->filevar, [&$this->onActivate, '__invoke']);
 
 		//registro onDeactivate
-		register_deactivation_hook($this->filevar, [&$this->onDeactivate, '__invoke']);
+        if( $this->onDeactivate != null )
+		    register_deactivation_hook($this->filevar, [&$this->onDeactivate, '__invoke']);
 
 		//registro uninstall
 		////register_uninstall_hook( $this->filevar , array( &$this, 'uninstall' ) );

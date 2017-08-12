@@ -22,6 +22,8 @@ class FrontController implements Registrable
 
         $this->styles[] = "asset/css/front.css";
         $this->scripts[] = "asset/js/front.js";
+
+        $this->shortFunctions = [];
     }
 
     public function addShortcode($shortcode, $pairs = [], $preheaderController = null){

@@ -1,7 +1,7 @@
 {
     "name": "labgua/wpplug",
     "description": "WPPlug Framework",
-    "license": "MIT",
+    "license": "GPL-3.0",
     "require": {
         "twig/twig": "~2.0"
     },

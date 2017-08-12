@@ -1,0 +1,11 @@
+{
+    "name": "labgua/wpplug",
+    "description": "WPPlug Framework",
+    "license": "MIT",
+    "require": {
+        "twig/twig": "~2.0"
+    },
+    "autoload": {
+        "psr-0": { "Labgua\\WPPlug\\": "lib/" }
+    }
+}

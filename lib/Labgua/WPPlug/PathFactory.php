@@ -17,27 +17,31 @@ namespace Labgua\WPPlug;
 class PathFactory
 {
 
-	private static $file = [];
+    private static $file = [];
 
-	public static function init($codename, $in_file ){
-		PathFactory::$file[$codename] = $in_file;
-	}
+    public static function init($codename, $in_file)
+    {
+        PathFactory::$file[$codename] = $in_file;
+    }
 
 
+    public static function getFile($codename)
+    {
+        return PathFactory::$file[$codename];
+    }
 
-	public static function getFile($codename){
-		return PathFactory::$file[$codename];
-	}
+    public static function getPath($codename)
+    {
+        return dirname(PathFactory::$file[$codename]);
+    }
 
-	public static function getPath($codename){
-		return dirname(PathFactory::$file[$codename]);
-	}
+    public static function urlAsset($codename)
+    {
+        return plugins_url("", PathFactory::$file[$codename]);
+    }
 
-	public static function urlAsset($codename){
-		return plugins_url("", PathFactory::$file[$codename] );
-	}
-
-	private function __construct(){
-	}
+    private function __construct()
+    {
+    }
 
 }

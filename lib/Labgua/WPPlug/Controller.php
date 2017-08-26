@@ -12,22 +12,22 @@ use Twig_Environment;
  */
 class Controller
 {
-	private $codename;
-	private $loader;
-	private $twig;
+    private $codename;
+    private $loader;
+    private $twig;
 
     private $data;
 
-	public function __construct( $context,  $pathView = "/view", $cache = false )
-	{
+    public function __construct($context, $pathView = "/view", $cache = false)
+    {
 
-		$this->loader = new Twig_Loader_Filesystem( PathFactory::getPath($context["codename"]) . $pathView);
+        $this->loader = new Twig_Loader_Filesystem(PathFactory::getPath($context["codename"]) . $pathView);
 
-		$twigOptions[] = array();
-		if( !$cache ) $twigOptions['cache'] = false;
-		else $twigOptions['cache'] = PathFactory::getPath() . '/cache';
+        $twigOptions[] = array();
+        if (!$cache) $twigOptions['cache'] = false;
+        else $twigOptions['cache'] = PathFactory::getPath() . '/cache';
 
-		$this->twig = new Twig_Environment($this->loader, $twigOptions);
+        $this->twig = new Twig_Environment($this->loader, $twigOptions);
 
 
         /*
@@ -37,29 +37,34 @@ class Controller
         */
         $this->codename = $context["codename"];
         $this->data = $context;
-	}
-
-	public function getTwig(){
-		return $this->twig;
-	}
-
-
-	public function addData($key, $value){
-	    $this->data[$key] = $value;
     }
 
-    public function getData(){
-    	return $this->data;
+    public function getTwig()
+    {
+        return $this->twig;
     }
 
-	public function addFlash($status, $message){
-	    $this->data["flashes"][] = [
-	        "status" => $status,
+
+    public function addData($key, $value)
+    {
+        $this->data[$key] = $value;
+    }
+
+    public function getData()
+    {
+        return $this->data;
+    }
+
+    public function addFlash($status, $message)
+    {
+        $this->data["flashes"][] = [
+            "status" => $status,
             "message" => $message
         ];
     }
 
-	public function render($file){
-		echo $this->twig->render($file, $this->data);
-	}
+    public function render($file)
+    {
+        echo $this->twig->render($file, $this->data);
+    }
 }

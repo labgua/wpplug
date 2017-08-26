@@ -25,34 +25,37 @@ class Plugin implements Registrable
     private $version;
     private $filevar;
 
-	private $components;
+    private $components;
 
-	function __construct($codename, $version, $filevar){
+    function __construct($codename, $version, $filevar)
+    {
 
-        PathFactory::init( $codename,$filevar );
+        PathFactory::init($codename, $filevar);
 
-	    $this->codename = $codename;
-	    $this->version = $version;
-	    $this->filevar = $filevar;
+        $this->codename = $codename;
+        $this->version = $version;
+        $this->filevar = $filevar;
 
-		$this->components["setup"] = new Setup($codename, $version);
-		$this->components["front"] = new FrontController($codename);
-		$this->components["admin"] = new AdminController($codename);
-		$this->components["ctp"] = new CustomPostTypes($codename);
-		$this->components["services"] = new Services();
-		$this->components["widgets"] = new Widgets($codename);
-		$this->components["cron"] = new Cron($codename);
-	}
+        $this->components["setup"] = new Setup($codename, $version);
+        $this->components["front"] = new FrontController($codename);
+        $this->components["admin"] = new AdminController($codename);
+        $this->components["ctp"] = new CustomPostTypes($codename);
+        $this->components["services"] = new Services();
+        $this->components["widgets"] = new Widgets($codename);
+        $this->components["cron"] = new Cron($codename);
+    }
 
-	public function add($name_component, $component){
-		$this->components[$name_component] = $component;
-	}
+    public function add($name_component, $component)
+    {
+        $this->components[$name_component] = $component;
+    }
 
-	public function __get($name){
+    public function __get($name)
+    {
         if (array_key_exists($name, $this->components)) {
             return $this->components[$name];
         }
-        throw new \Exception("Component '$name' not found in ". $this->codename ." Plugin");
+        throw new \Exception("Component '$name' not found in " . $this->codename . " Plugin");
     }
 
     /**
@@ -95,14 +98,16 @@ class Plugin implements Registrable
      * @param $event_name   string of the event
      * @param $closure      \Closure have one argument, the event!
      */
-    public function addListener($event_name, $closure, $priority = 10){
+    public function addListener($event_name, $closure, $priority = 10)
+    {
         EventDispatcher::addListener($event_name, $closure, $priority);
     }
 
-    public function register(){
-		foreach ( $this->components as $cp ) {
-			$cp->register();
-		}
-	}
+    public function register()
+    {
+        foreach ($this->components as $cp) {
+            $cp->register();
+        }
+    }
 
 }

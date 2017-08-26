@@ -2,6 +2,7 @@
 
 namespace Labgua\WPPlug;
 
-interface Registrable {
-	public function register();
+interface Registrable
+{
+    public function register();
 }

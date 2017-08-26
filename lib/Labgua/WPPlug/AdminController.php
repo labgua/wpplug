@@ -16,7 +16,8 @@ class AdminController implements Registrable
     private $scripts;
 
 
-    public function __construct( $codename ){
+    public function __construct($codename)
+    {
         $this->codename = $codename;
         $this->name = $codename . "_admin";
 
@@ -28,7 +29,8 @@ class AdminController implements Registrable
     }
 
 
-    public function addPage( $slug, $label, $parent = null ){
+    public function addPage($slug, $label, $parent = null)
+    {
         $this->slugFunctions[$slug] = [
             "slug" => $slug,
             "label" => $label,
@@ -37,47 +39,48 @@ class AdminController implements Registrable
         ];//$function;
     }
 
-    public function enqueueStyle($filePath){
+    public function enqueueStyle($filePath)
+    {
         $this->styles[] = $filePath;
     }
 
-    public function enqueueScript($filePath){
+    public function enqueueScript($filePath)
+    {
         $this->scripts[] = $filePath;
     }
 
 
-    public function __callback_admin_menu(){
+    public function __callback_admin_menu()
+    {
 
-        array_walk($this->slugFunctions, function($context){
+        array_walk($this->slugFunctions, function ($context) {
 
             ///var_dump($context);
 
-            $newfunc = function() use($context) {
+            $newfunc = function () use ($context) {
                 $context['urlPost'] = "admin.php?page=" . $context["slug"];
                 ///var_dump($context);
                 $context["codename"] = $this->codename;
-                require_once plugin_dir_path($this->filevar) . "controller/". $context["slug"] .".php";
+                require_once plugin_dir_path($this->filevar) . "controller/" . $context["slug"] . ".php";
             };
 
 
-
-            if( $context["parent"] == null ){
+            if ($context["parent"] == null) {
                 add_menu_page(
                     $context["label"],
                     $context["label"],
                     "manage_options",
                     $context["slug"],
-                    [ &$newfunc, "__invoke" ]/////[&$runner, "run"]
+                    [&$newfunc, "__invoke"]/////[&$runner, "run"]
                 );
-            }
-            else{
+            } else {
                 add_submenu_page(
                     $context["parent"],
                     $context["label"],
                     $context["label"],
                     "manage_options",
                     $context["slug"],
-                    [ &$newfunc, "__invoke" ]/////[&$runner, "run"]
+                    [&$newfunc, "__invoke"]/////[&$runner, "run"]
                 );
             }
 
@@ -86,15 +89,15 @@ class AdminController implements Registrable
     }
 
 
+    public function __callback_admin_style()
+    {
 
-    public function __callback_admin_style(){
-
-        if( is_admin() ) {
+        if (is_admin()) {
             foreach ($this->styles as $s) {
 
                 wp_enqueue_style(
                     $this->name,
-                    plugins_url($s, $this->filevar )
+                    plugins_url($s, $this->filevar)
                 );
 
             }
@@ -102,14 +105,15 @@ class AdminController implements Registrable
 
     }
 
-    public function __callback_admin_script(){
+    public function __callback_admin_script()
+    {
 
-        if( is_admin() ) {
+        if (is_admin()) {
             foreach ($this->scripts as $s) {
 
                 wp_enqueue_script(
                     $this->name,
-                    plugins_url($s, $this->filevar )
+                    plugins_url($s, $this->filevar)
                 );
 
             }
@@ -118,15 +122,16 @@ class AdminController implements Registrable
     }
 
 
-    public function register(){
+    public function register()
+    {
         ////registra pages
-        add_action('admin_menu', array( &$this , '__callback_admin_menu') );
+        add_action('admin_menu', array(&$this, '__callback_admin_menu'));
 
         ////registra CSS
-        add_action('init', array( &$this , '__callback_admin_style') );
+        add_action('init', array(&$this, '__callback_admin_style'));
 
         ////registra JS
-        add_action('init', array( &$this , '__callback_admin_script') );
+        add_action('init', array(&$this, '__callback_admin_script'));
     }
 
 }

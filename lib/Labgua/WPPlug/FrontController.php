@@ -13,7 +13,8 @@ class FrontController implements Registrable
     private $styles;
     private $scripts;
 
-    public function __construct( $codename ){
+    public function __construct($codename)
+    {
 
         $this->codename = $codename;
         $this->name = $codename . "_front";
@@ -26,15 +27,16 @@ class FrontController implements Registrable
         $this->shortFunctions = [];
     }
 
-    public function addShortcode($shortcode, $pairs = [], $preheaderController = null){
+    public function addShortcode($shortcode, $pairs = [], $preheaderController = null)
+    {
 
 
         //// preheder
-        if( $preheaderController != null ){
-            $preFunc = function () use($shortcode, $preheaderController){
-                if( !is_admin() ){
+        if ($preheaderController != null) {
+            $preFunc = function () use ($shortcode, $preheaderController) {
+                if (!is_admin()) {
                     global $post, $current_user;
-                    if( !empty( $post->post_content ) && strpos( $post->post_content, '['. $shortcode .']' ) !== false ){
+                    if (!empty($post->post_content) && strpos($post->post_content, '[' . $shortcode . ']') !== false) {
                         $preheaderController($post, $current_user);
                     }
                 }
@@ -49,7 +51,7 @@ class FrontController implements Registrable
         /// define:
         ///  $context[key] : value (from defined  where used)
         ///  $context["shortcode_content"] : the content used in the shortcode
-        $newfunc = function($atts, $content) use($shortcode, $pairs) {
+        $newfunc = function ($atts, $content) use ($shortcode, $pairs) {
 
             $data_shortcode = shortcode_atts($pairs, $atts);
             $content = do_shortcode($content);
@@ -61,32 +63,33 @@ class FrontController implements Registrable
 
             ///var_dump($context);
 
-            require_once plugin_dir_path($this->filevar) . "controller/". $shortcode .".php";
+            require_once plugin_dir_path($this->filevar) . "controller/" . $shortcode . ".php";
         };
-
 
 
         $this->shortFunctions[$shortcode] = [
             "shortcode" => $shortcode,
             "function" => $newfunc,
-            "preheader" =>$preFunc,
+            "preheader" => $preFunc,
         ];
 
     }
 
-    public function addRoute(){
+    public function addRoute()
+    {
         //TODO creare un metodo che crea una pagina con Rewrite API
     }
 
 
-    public function __callback_front_style(){
+    public function __callback_front_style()
+    {
 
-        if( !is_admin() ) {
+        if (!is_admin()) {
             foreach ($this->styles as $s) {
 
                 wp_enqueue_style(
                     $this->name,
-                    plugins_url($s, $this->filevar )
+                    plugins_url($s, $this->filevar)
                 );
 
             }
@@ -94,14 +97,15 @@ class FrontController implements Registrable
 
     }
 
-    public function __callback_front_script(){
+    public function __callback_front_script()
+    {
 
-        if( !is_admin() ) {
+        if (!is_admin()) {
             foreach ($this->scripts as $s) {
 
                 wp_enqueue_script(
                     $this->name,
-                    plugins_url($s, $this->filevar )
+                    plugins_url($s, $this->filevar)
                 );
 
             }
@@ -109,23 +113,24 @@ class FrontController implements Registrable
 
     }
 
-    public function register(){
+    public function register()
+    {
 
         /// registra shortcode + preheader
-        foreach ($this->shortFunctions as $shortcode => $value){
-            add_shortcode($shortcode, [ &$value["function"], "__invoke" ] );
+        foreach ($this->shortFunctions as $shortcode => $value) {
+            add_shortcode($shortcode, [&$value["function"], "__invoke"]);
 
-            if( $value["preheader"] != null ){
-                add_action('wp', [ &$value["preheader"], "__invoke" ], 1 );
+            if ($value["preheader"] != null) {
+                add_action('wp', [&$value["preheader"], "__invoke"], 1);
             }
         }
 
 
         ///registra CSS
-        add_action('init', array( &$this , '__callback_front_style') );
+        add_action('init', array(&$this, '__callback_front_style'));
 
         //registra JS
-        add_action('init', array( &$this , '__callback_front_script') );
+        add_action('init', array(&$this, '__callback_front_script'));
 
     }
 

@@ -38,7 +38,7 @@ class Plugin implements Registrable
 		$this->components["setup"] = new Setup($codename, $version);
 		$this->components["front"] = new FrontController($codename);
 		$this->components["admin"] = new AdminController($codename);
-		$this->components["ctp"] = new CustomPostTypes();
+		$this->components["ctp"] = new CustomPostTypes($codename);
 		$this->components["services"] = new Services();
 		$this->components["widgets"] = new Widgets($codename);
 		$this->components["cron"] = new Cron($codename);

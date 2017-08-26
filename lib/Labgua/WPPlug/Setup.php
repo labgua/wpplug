@@ -15,6 +15,8 @@ class Setup implements Registrable
 	private $onDeactivate;
 	///private $onUninstall;
 
+    private $dependencies;
+
 	public function __construct($codename, $version)
 	{
 		$this->codename = $codename;
@@ -26,10 +28,15 @@ class Setup implements Registrable
 		$this->onActivate = null;
 		$this->onDeactivate = null;
 
+		$this->dependencies = [];
+
 	}
 
 
 
+    public function addDependency($plugin_name){
+        $this->dependencies[] = $plugin_name;
+    }
 
 	public function setOnInstall($closure){
 		$this->onInstall = $closure;
@@ -77,6 +84,42 @@ class Setup implements Registrable
 	}
 	*/
 
+	public function __onActivate(){
+
+	    //check dependencies [ installed & actived ]
+        $plugin_names = [];
+        $plugin_paths = [];
+        $all_plugins = get_plugins();
+        foreach ($all_plugins as $path => $plugin){
+            $plugin_names[] = $plugin["TextDomain"];
+            $plugin_paths[ $plugin["TextDomain"] ] = $path;
+        }
+
+        //var_dump($plugin_names);
+        //var_dump($plugin_paths);
+
+        foreach ($this->dependencies as $dependency){
+
+            //not installed ...
+            if( !in_array($dependency, $plugin_names) )
+                wp_die("Dependency '<b>$dependency</b>' not installed!", "Missing Dependency");
+
+            //not activated ...
+            if( !is_plugin_active( $plugin_paths[$dependency] )  )
+                wp_die("Dependency '<b>$dependency</b>' not activated!", "Inactivated Dependency");
+
+        }
+
+
+        //run onActivate closure..
+        if( $this->onActivate != null  ){
+            /** @var \Closure $f */
+            $f = $this->onActivate;
+            $f();
+        }
+
+    }
+
 
 	public function register(){
 
@@ -84,8 +127,7 @@ class Setup implements Registrable
         add_action('init', [ &$this, "__install" ], 0);
 
 		//registro onActivate
-        if( $this->onActivate != null )
-		    register_activation_hook($this->filevar, [&$this->onActivate, '__invoke']);
+        register_activation_hook($this->filevar, [&$this, '__onActivate']);
 
 		//registro onDeactivate
         if( $this->onDeactivate != null )

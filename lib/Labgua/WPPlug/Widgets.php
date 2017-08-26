@@ -31,4 +31,5 @@ class Widgets implements Registrable {
             add_action( 'widgets_init', [&$this, "__callback_register_widget"]);
         }
     }
+
 }

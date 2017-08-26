@@ -74,4 +74,5 @@ class Cron implements Registrable {
         });
 
     }
+
 }
